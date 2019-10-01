@@ -1,12 +1,45 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+//Modules
+import React from "react";
+import ReactDOM from "react-dom";
+//Components
+import App from "./App";
+//Redux
+import { createStore, applyMiddleware, compose } from "redux";
+import { Provider } from "react-redux";
+import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "./Store/Reducers/rootReducer";
+//Firebase
+import { reduxFirestore, getFirestore } from "redux-firestore";
+import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
+import firebaseConfig from "./Config/firebaseConfig";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(
+    compose(
+      applyMiddleware(
+        thunk.withExtraArgument({
+          getFirebase,
+          getFirestore
+        })
+      ),
+      reduxFirestore(firebaseConfig),
+      reactReduxFirebase(firebaseConfig, {
+        attachAuthIsReady: true,
+        useFirestoreForProfile: true,
+        userProfile: "users"
+      })
+    )
+  )
+);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+//Wait for auth data before render
+store.firebaseAuthIsReady.then(() => {
+  const app = (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+  ReactDOM.render(app, document.getElementById("root"));
+});

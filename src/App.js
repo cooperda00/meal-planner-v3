@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//Modules
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+//Styled Components
+import GlobalStyle from "./Global";
+//Routes
+import Home from "./Components/Pages/Home";
+import Login from "./Components/Pages/Login";
+import Signup from "./Components/Pages/Signup";
+import Pantry from "./Components/Pages/Pantry";
+import Recipies from "./Components/Pages/Recipies";
+import Planner from "./Components/Pages/Planner";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <GlobalStyle />
+
+      <Route exact path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
+      <Route path="/pantry" component={Pantry} />
+      <Route path="/recipies" component={Recipies} />
+      <Route path="/planner" component={Planner} />
+    </Router>
   );
-}
+};
 
 export default App;
